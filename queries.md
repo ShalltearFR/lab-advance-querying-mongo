@@ -27,8 +27,7 @@ sort: {number_of_employees:1}
 limit: 10
 
 ### 6. All the companies that don't include the `partners` field.
-{partners: {$elemMatch: {$exists:true}}}
-filter:
+filter:{partners: {$elemMatch: {$exists:false}}}
 project:
 sort:
 collation:
@@ -46,75 +45,79 @@ project: {name:1, number_of_employees:1}
 
 filter:
 project:
-sort:
+sort:{"ipo.valuation_amount":-1}
 collation:
 
 ### 10. Retrieve the 10 companies with most employees, order by the `number of employees`
 
 filter:
 project:
-sort:
+sort:{number_of_employees:-1}
 collation:
+limit:10
 
 ### 11. All the companies founded on the second semester of the year. Limit your search to 1000 companies.
 
-filter:
+filter:{founded_month:{$gt:6}}
 project:
 sort:
 collation:
+limit:1000
 
 ### 12. All the companies founded before 2000 that have an acquisition amount of more than 10.000.000
 
-filter:
+filter:{$and:[{founded_year:{$lt:2000}},{"acquisition.price_amount":{$gt:10000000}}]}
 project:
 sort:
 collation:
 
 ### 13. All the companies that have been acquired after 2010, order by the acquisition amount, and retrieve only their `name` and `acquisition` field.
 
-filter:
-project:
-sort:
+filter:{founded_year:{$gt:2010}}
+project:{name:1, acquisition:1}
+sort:{"acquisition.price_amount":1}
 collation:
 
 ### 14. Order the companies by their `founded year`, retrieving only their `name` and `founded year`.
 
 filter:
-project:
-sort:
+project:{name:1, founded_year:1}
+sort:{founded_year:1}
 collation:
 
 ### 15. All the companies that have been founded on the first seven days of the month, including the seventh. Sort them by their `acquisition price` in a descending order. Limit the search to 10 documents.
 
-filter:
+filter:{founded_day:{$lte:7}}
 project:
-sort:
+sort:{"acquisition.price_amount":-1}
 collation:
+limit:10
 
 ### 16. All the companies on the 'web' `category` that have more than 4000 employees. Sort them by the amount of employees in ascending order.
 
-filter:
+filter:{$and:[{category_code:"web"},{number_of_employees:{$gt:4000}}]}
 project:
-sort:
+sort:{number_of_employees:1}
 collation:
 
 ### 17. All the companies whose acquisition amount is more than 10.000.000, and currency is 'EUR'.
 
-filter:
+filter:{$and:[{"acquisition.price_amount":{$gt:10000000}},{"acquisition.price_currency_code":"EUR"}]}
 project:
 sort:
 collation:
 
 ### 18. All the companies that have been acquired on the first trimester of the year. Limit the search to 10 companies, and retrieve only their `name` and `acquisition` fields.
 
-filter:
-project:
+filter:{founded_month:{$lte:3}}
+project:{name:1, acquisition:1}
 sort:
 collation:
+limit:10
 
 ### 19. All the companies that have been founded between 2000 and 2010, but have not been acquired before 2011.
 
-filter:
+filter:{$and:[{founded_year:{$gte:2000}},{founded_year:{$lte:2010}},{"acquisition.acquired_year":{$gte:2011}}]}
 project:
 sort:
 collation:
